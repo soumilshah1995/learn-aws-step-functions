@@ -1,0 +1,66 @@
+{
+  "Comment":"A Hello World example of the Amazon States Language using Pass states",
+  "StartAt":"Lambda1",
+  "States":{
+    "Lambda1":{
+      "Type":"Task",
+      "Resource":"arn:aws:lambda:us-east-1:867098943567:function:hello",
+      "Retry": [
+        {
+          "ErrorEquals": ["CustomError"],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 2,
+          "BackoffRate": 2.0
+        },
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 2,
+          "BackoffRate": 2.0
+        },
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 5,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch":[
+        {
+          "ErrorEquals":[
+            "CustomError"
+          ],
+          "Next":"CustomErrorFallback"
+        },
+        {
+          "ErrorEquals":[
+            "States.TaskFailed"
+          ],
+          "Next":"ReservedTypeFallback"
+        },
+        {
+          "ErrorEquals":[
+            "States.ALL"
+          ],
+          "Next":"CatchAllFallback"
+        }
+      ],
+      "End":true
+    },
+    "CustomErrorFallback":{
+      "Type":"Pass",
+      "Result":"This is a fallback from a custom lambda function exception",
+      "End":true
+    },
+    "ReservedTypeFallback":{
+      "Type":"Pass",
+      "Result":"This is a fallback from a reserved error code",
+      "End":true
+    },
+    "CatchAllFallback":{
+      "Type":"Pass",
+      "Result":"This is a fallback from a reserved error code",
+      "End":true
+    }
+  }
+}

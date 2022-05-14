@@ -1,0 +1,13 @@
+{
+  "Comment":"A Hello World example of the Amazon States Language using Pass states",
+  "StartAt":"Lambda1",
+  "States":{
+    "Lambda1":{
+      "Type":"Pass",
+      "Result":{
+        "message":"Dummy result"
+      },
+      "End":true
+    }
+  }
+}
