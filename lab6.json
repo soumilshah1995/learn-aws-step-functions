@@ -1,0 +1,41 @@
+
+
+
+{
+  "Comment":"A Hello World example of the Amazon States Language using Pass states",
+  "StartAt":"ForLoop",
+  "States":{
+    "ForLoop":{
+      "Type":"Map",
+      "InputPath": "$.detail",
+      "ItemsPath": "$.shipped",
+      "MaxConcurrency": 2,
+      "Iterator": {
+        "StartAt": "Process Json Files",
+        "States": {
+          "Process Json Files": {
+            "Type": "Task",
+            "Resource":"arn:aws:lambda:us-east-1:867098943567:function:hello-world",
+            "Retry": [
+              {
+                "ErrorEquals": ["States.TaskFailed"],
+                "IntervalSeconds": 30,
+                "MaxAttempts": 2,
+                "BackoffRate": 2.0
+              },
+              {
+                "ErrorEquals": ["States.ALL"],
+                "IntervalSeconds": 5,
+                "MaxAttempts": 5,
+                "BackoffRate": 2.0
+              }
+            ],
+            "End":true
+          }
+        }
+      },
+      "ResultPath": "$.detail.shipped",
+      "End":true
+    }
+  }
+}
