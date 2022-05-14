@@ -1,0 +1,50 @@
+{
+  "Comment": "A Hello World example of the Amazon States Language using Pass states",
+  "StartAt": "Branch Based on Choice",
+  "States": {
+
+    "Branch Based on Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.statusCode",
+          "StringEquals": "200",
+          "Next": "statusCode200State"
+        },
+        {
+          "Variable": "$.statusCode",
+          "StringEquals": "-1",
+          "Next": "statusCodeNegativeOneState"
+        }
+      ],
+      "Default": "DefaultState"
+    },
+
+    "statusCode200State": {
+      "Type": "Pass",
+      "Result": {
+        "status": 200,
+        "message": "state statusCode200State says Hello"
+      },
+      "End": true
+    },
+
+    "statusCodeNegativeOneState": {
+      "Type": "Pass",
+      "Result": {
+        "status": 200,
+        "message": "state statusCodeNegativeOneState says Hello"
+      },
+      "End": true
+    },
+
+    "DefaultState": {
+      "Type": "Pass",
+      "Result": {
+        "status": 200,
+        "message": "state DefaultState says Hello"
+      },
+      "End": true
+    }
+  }
+}
