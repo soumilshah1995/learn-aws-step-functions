@@ -1,5 +1,10 @@
 import json
 import datetime
+import os
+import json
+import boto3
+import uuid
+
 
 def lambda_handler(event, context):
 
@@ -8,6 +13,5 @@ def lambda_handler(event, context):
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
     print(event)
-
-    new_data = event["time"] = datetime.datetime.now().__str__()
+    event["time"] = datetime.datetime.now().__str__()
     return event

@@ -1,26 +1,26 @@
 {
   "Comment": "A Hello World example of the Amazon States Language using Pass states",
-  "StartAt": "Branch Based on Choice",
+  "StartAt": "Reading Data from Database",
   "States": {
 
-    "Branch Based on Choice": {
+    "Reading Data from Database": {
       "Type": "Choice",
       "Choices": [
         {
           "Variable": "$.statusCode",
           "StringEquals": "200",
-          "Next": "statusCode200State"
+          "Next": "Push to S3"
         },
         {
           "Variable": "$.statusCode",
           "StringEquals": "-1",
-          "Next": "statusCodeNegativeOneState"
+          "Next": "Fail State"
         }
       ],
       "Default": "DefaultState"
     },
 
-    "statusCode200State": {
+    "Push to S3": {
       "Type": "Pass",
       "Result": {
         "status": 200,
@@ -29,7 +29,7 @@
       "End": true
     },
 
-    "statusCodeNegativeOneState": {
+    "Fail State": {
       "Type": "Pass",
       "Result": {
         "status": 200,

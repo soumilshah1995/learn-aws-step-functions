@@ -1,13 +1,13 @@
 {
   "Comment":"A Hello World example of the Amazon States Language using Pass states",
-  "StartAt":"State1",
+  "StartAt":"Fire Lambda",
   "States":{
-    "State1":{
+    "Fire Lambda":{
       "Type":"Task",
-      "Resource":"arn:aws:lambda:us-east-1:867098943567:function:hello-world",
+      "Resource":"arn:aws:lambda:us-west-1:867098943567:function:hello",
       "Retry": [
         {
-          "ErrorEquals": ["CustomError"],
+          "ErrorEquals": ["Game Over", "Error Game Over"],
           "IntervalSeconds": 1,
           "MaxAttempts": 2,
           "BackoffRate": 2.0

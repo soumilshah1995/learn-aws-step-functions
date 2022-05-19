@@ -1,0 +1,52 @@
+
+
+
+{
+  "Comment":"A Hello World example of the Amazon States Language using Pass states",
+  "StartAt":"ForLoop",
+  "States":{
+    "ForLoop":{
+      "Type":"Map",
+      "InputPath": "$.detail",
+      "ItemsPath": "$.shipped",
+      "MaxConcurrency": 2,
+      "Iterator": {
+        "StartAt": "Process Json Files",
+        "States": {
+          "Process Json Files": {
+            "Type": "Task",
+            "Resource":"XXXXXXXXXXX",
+            "Catch":[
+              {
+                "ErrorEquals":[
+                  "States.TaskFailed"
+                ],
+                "Next":"Publish Failed  to DeadLetter Queue",
+                "ResultPath": null
+              },
+              {
+                "ErrorEquals":[
+                  "States.ALL"
+                ],
+                "Next":"Publish Failed  to DeadLetter Queue",
+                "ResultPath": null
+              }
+            ],
+            "End":true
+          },
+          "Publish Failed  to DeadLetter Queue": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+              "QueueUrl": "XXXXXXXXXXXXXXXXXXXXX",
+              "MessageBody.$": "$"
+            },
+            "End": true
+          }
+        }
+      },
+      "ResultPath": "$.detail.shipped",
+      "End":true
+    }
+  }
+}
