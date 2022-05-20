@@ -1,0 +1,67 @@
+{
+  "Comment":"A Hello World example of the Amazon States Language using Pass states",
+  "StartAt":"ForLoop",
+  "States":{
+    "ForLoop":{
+      "Type":"Map",
+      "InputPath": "$.detail",
+      "ItemsPath": "$.shipped",
+      "MaxConcurrency": 2,
+      "Iterator": {
+        "StartAt": "Process Json Files Push to FIreHose(Elastic Search)",
+        "States": {
+
+          "Process Json Files Push to FIreHose(Elastic Search)": {
+            "Type": "Task",
+            "Resource":"XX",
+            "Catch":[
+              {
+                "ErrorEquals":[
+                  "States.TaskFailed"
+                ],
+                "Next":"Publish Failed  to DeadLetter Queue",
+                "ResultPath": null
+              },
+              {
+                "ErrorEquals":[
+                  "States.ALL"
+                ],
+                "Next":"Publish Failed  to DeadLetter Queue",
+                "ResultPath": null
+              }
+            ],
+            "Retry": [
+              {
+                "ErrorEquals": ["States.TaskFailed"],
+                "IntervalSeconds": 30,
+                "MaxAttempts": 2,
+                "BackoffRate": 2.0
+              },
+              {
+                "ErrorEquals": ["States.ALL"],
+                "IntervalSeconds": 5,
+                "MaxAttempts": 5,
+                "BackoffRate": 2.0
+              }
+            ],
+            "End": true
+          },
+
+
+
+          "Publish Failed  to DeadLetter Queue": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+              "QueueUrl": "XXX",
+              "MessageBody.$": "$"
+            },
+            "End": true
+          }
+        }
+      },
+      "ResultPath": "$.detail.shipped",
+      "End":true
+    }
+  }
+}
