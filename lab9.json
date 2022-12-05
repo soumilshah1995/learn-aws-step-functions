@@ -1,0 +1,48 @@
+{
+    "Comment": "A description of my state machine",
+    "StartAt": "Map",
+    "States": {
+        "Map": {
+            "Type": "Map",
+            "ItemProcessor": {
+                "ProcessorConfig": {
+                    "Mode": "DISTRIBUTED",
+                    "ExecutionType": "STANDARD"
+                },
+                "StartAt": "Lambda Invoke",
+                "States": {
+                    "Lambda Invoke": {
+                        "Type": "Task",
+                        "Resource": "arn:aws:states:::lambda:invoke",
+                        "OutputPath": "$.Payload",
+                        "Parameters": {
+                            "FunctionName": "arn:aws:lambda:us-west-2:XXXXXXXXXXXXXXX",
+                            "Payload.$": "$"
+                        },
+                        "Retry": [
+                            {
+                                "ErrorEquals": [
+                                    "Lambda.ServiceException",
+                                    "Lambda.AWSLambdaException",
+                                    "Lambda.SdkClientException",
+                                    "Lambda.TooManyRequestsException"
+                                ],
+                                "IntervalSeconds": 2,
+                                "MaxAttempts": 6,
+                                "BackoffRate": 2
+                            }
+                        ],
+                        "End": true
+                    }
+                }
+            },
+            "End": true,
+            "Label": "Map",
+            "MaxConcurrency": 1000,
+            "ItemsPath": "$.detail.shipped",
+            "ItemBatcher": {
+                "MaxItemsPerBatch": 2
+            }
+        }
+    }
+}
